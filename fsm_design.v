@@ -20,14 +20,14 @@ parameter [3:0]
   DISPENSE  = 4'b1000;
 
 reg [3:0] state, nextstate;
-
+//state register: basically remembers what state we're in
 always @(posedge clk or posedge reset) begin
   if (reset)
     state <= IDLE;
   else
     state <= nextstate;
 end
-
+//next state logic. this is what needs to be worked on the most
 always @(*) begin
   nextstate = state;
   case (state)
