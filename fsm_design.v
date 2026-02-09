@@ -18,6 +18,7 @@ parameter [3:0]
   SEL2      = 4'b0110,
   SEL3      = 4'b0111,
   DISPENSE  = 4'b1000;
+  REFUND    = 4'b1001;
 
 reg [3:0] state, nextstate;
 //state register: basically remembers what state we're in
