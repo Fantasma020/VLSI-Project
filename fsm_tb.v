@@ -21,12 +21,14 @@ module fsm_tbm;
 
   initial begin
     reset =1;
-
+    cash_inserted = 0;
+    cashval = 0;
+    selection = 2'b00;
+    
     #10 reset = 0;
     #10 cash_inserted = 1;
         cashval = 5;
     #10 cash_inserted = 0;
-    if(.nextstate == SELECTION)
     #10 selection = 2'b01;
     #20;
 
@@ -34,9 +36,7 @@ module fsm_tbm;
     #10 reset = 0;
     #10 cash_inserted = 1;
         cashval = 1;
-    #10 cash_inserted = 0;
-    #10 cash_inserted = 1;
-        cashval = 4;
+    #10 cashval = 4;
     #10 cash_inserted = 0;
     #20;
     $finish;
