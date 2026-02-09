@@ -11,6 +11,7 @@ input  reset;
 input  cash_inserted;
 input  [1:0] selection;
 input  [3:0] cashval;
+output refundval;
 output dispense;
 parameter [3:0]
   IDLE      = 4'b0000,
@@ -30,21 +31,14 @@ reg [3:0] state, nextstate;
 always @(posedge clk) begin
   if (reset)
     state <= IDLE;
+	balance <= 4'b0000;
+	cash_inserted = 0;
+    selection = 2'b00;
+    cashval = 4'b0000;
   else
     state <= nextstate;
 end
-	
-
-//cash insertion counting
-	always @(posedge clk) begin
-    if(reset)
-      balance <= 4'b0000;
-    else if(state == CASH && cash_inserted)	//This is what was not triggering before sequentially
-      balance <= cashval + balance;
-    else if(state == IDLE)
-      balance <= 4'b0000;
-  end
-  
+	  
 //next state logic. this is what needs to be worked on the most
 always @(*) begin
   nextstate = state;
@@ -56,6 +50,7 @@ always @(*) begin
         nextstate <= IDLE;
     end
     CASH: begin
+		balance = cashval + balance;
 		if(!cash_inserted) //we stopped putting in money //How do we make sure this doesnt eat any input, is cash_inserted boolean? cash_inserted is boolean 
         nextstate <= VERIFY;
       else // if user is still inserting cash then stay in CASH state
@@ -71,6 +66,8 @@ always @(*) begin
     end
 	REFUND : begin
 		//return money
+		refundval = balance - 5;
+		balance = 5;
 		nextstate <= VERIFY;
 	end
     SELECTION: begin
