@@ -33,7 +33,7 @@ module fsm_tbm;
     #10 cash_inserted = 1;
         cashval = 5;
     #10 cash_inserted = 0;
-    #10 selection = 2'b00;
+    #10 selection = 2'b01;
     #20;
 
     #10 reset = 1;
