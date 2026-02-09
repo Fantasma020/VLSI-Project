@@ -35,6 +35,7 @@ always @(posedge clk or posedge reset) begin
   else
     state <= nextstate;
 end
+	
 
 //cash insertion counting
   always @(posedge clk or posedge reset) begin
@@ -51,16 +52,15 @@ always @(*) begin
   nextstate = state;
   case (state)
     IDLE: begin
-      if (cash_inserted || card_inserted)
+		if (cash_inserted || card_inserted) //once cash is inserted then we go into the next state
         nextstate = CASH;  
-        nextstate = CASH;
-      else
+      else // otherwise we stay at IDLE
         nextstate = IDLE;
     end
     CASH: begin
-      if(!cash_inserted) //we stopped putting in money //How do we make sure this doesnt eat any input, is cash_inserted boolean?
+		if(!cash_inserted) //we stopped putting in money //How do we make sure this doesnt eat any input, is cash_inserted boolean? cash_inserted is boolean 
         nextstate = VERIFY;
-      else
+      else // if user is still inserting cash then stay in CASH state
         nextstate = CASH;
     end
     VERIFY: begin		//!!!What happens when the user inputs more money during the verify state and balance hasnt been updated yet because it hasnt went to CASH state? ex: put $5, how does line 35 trigger again, This should be "if it means the minimum, then selection is available" otherwise  return change and 
@@ -85,6 +85,7 @@ always @(*) begin
       else                // otherwise the user must choose a proper selection
         nextstate = SELECTION;
     end
+	  //after each selection we got to dispense no matter what
     SEL1: begin
       nextstate = DISPENSE;
     end
@@ -94,6 +95,7 @@ always @(*) begin
     SEL3: begin
       nextstate = DISPENSE;
     end
+	  //We "dispense" the item the user selected then go back to idle
     DISPENSE: begin
       nextstate = IDLE;
     end
