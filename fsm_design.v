@@ -1,7 +1,6 @@
 module fsm(clk,
 		   reset, 
 		   cash_inserted, 
-		   card_inserted, 
 		   selection, 
 		   cashval, 
 		   dispense
@@ -10,7 +9,6 @@ module fsm(clk,
 input  logic       clk;
 input  logic       reset;
 input  logic       cash_inserted;
-input  logic       card_inserted;
 input  logic [1:0] selection;
 input  logic [3:0] cashval;
 output logic       dispense;
@@ -52,7 +50,7 @@ always @(*) begin
   nextstate = state;
   case (state)
     IDLE: begin
-		if (cash_inserted || card_inserted) //once cash is inserted then we go into the next state
+		if (cash_inserted ) //once cash is inserted then we go into the next state
         nextstate = CASH;  
       else // otherwise we stay at IDLE
         nextstate = IDLE;
