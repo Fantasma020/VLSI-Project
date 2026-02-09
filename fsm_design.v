@@ -1,13 +1,18 @@
-module fsm(
-  input  logic       clk,
-  input  logic       reset,
-  input  logic       cash_inserted,
-  input  logic       card_inserted,
-  input  logic [1:0] selection,
-  input  logic [3:0] cashval,
-  output logic       dispense
-);
-
+module fsm(clk,
+		   reset, 
+		   cash_inserted, 
+		   card_inserted, 
+		   selection, 
+		   cashval, 
+		   dispense
+		  );
+input  logic       clk;
+input  logic       reset;
+input  logic       cash_inserted;
+input  logic       card_inserted;
+input  logic [1:0] selection;
+input  logic [3:0] cashval;
+output logic       dispense;
 parameter [3:0]
   IDLE      = 4'b0000,
   CASH      = 4'b0001,
@@ -70,11 +75,11 @@ always @(*) begin
 		nextstate= VERIFY;
 	end
     SELECTION: begin
-      if(selection = 2'b00) // first selection
+		if(selection == 2'b00) // first selection
         nextstate = SEL1;
-      else if(selection = 2'b01) // user chose second selection
+		else if(selection == 2'b01) // user chose second selection
         nextstate = SEL2;
-      else if (selection = 2'b10) // user chooses third selection
+		else if (selection == 2'b10) // user chooses third selection
         nextstate = SEL3;
       else                // otherwise the user must choose a proper selection
         nextstate = SELECTION;
