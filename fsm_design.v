@@ -62,7 +62,7 @@ always @(*) begin
     end
     VERIFY: begin        //!!!What happens when the user inputs more money during the verify state and balance hasn't been updated yet because it hasnt went to CASH state? ex: put $5, how does line 35 trigger again, This should be "if it means the minimum, then selection is available" otherwise  return change and 
         if(balance < 5 )        //When balance is < 5, Insufficient funds, needs to go back to CASH until minimum is met
-        nextstate = CASH;
+        nextstate = IDLE;
            else if (balance >= 5)    //When balance is > 5, Balance limit breached, Refund excess change and update balance according to returned change [Keep balance at 5]
      nextstate = SELECTION; 
     end
@@ -95,6 +95,10 @@ always @(*) begin
       nextstate = IDLE;
     end
   endcase
+end
+
+always @(*) begin
+           dispense = (state == DISPENSE)
 end
 
 endmodule
