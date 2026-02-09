@@ -38,6 +38,7 @@ module fsm_tbm;
         cashval = 1;
     #10 cashval = 4;
     #10 cash_inserted = 0;
+    #20 selection = 2'b11;
     #20;
     $finish;
   end
