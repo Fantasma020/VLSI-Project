@@ -28,11 +28,12 @@ always @(posedge clk or posedge reset) begin
   else
     state <= nextstate;
 end
+
 //cash insertion counting
   always @(posedge clk or posedge reset) begin
     if(reset)
       balance <= 4'b0000;
-    else if(state == CASH && cash_inserted)
+    else if(state == CASH && cash_inserted)	//This is what was not triggering before sequentially
       balance <= cashval + balance;
     else if(state == IDLE)
       balance <= 4'b0000;
@@ -44,21 +45,24 @@ always @(*) begin
   case (state)
     IDLE: begin
       if (cash_inserted || card_inserted)
+        nextstate = CASH;  
         nextstate = CASH;
       else
         nextstate = IDLE;
     end
     CASH: begin
-      if(!cash_inserted) //we stopped putting in money
+      if(!cash_inserted) //we stopped putting in money //How do we make sure this doesnt eat any input, is cash_inserted boolean?
         nextstate = VERIFY;
       else
         nextstate = CASH;
     end
-    VERIFY: begin
-      if(balance < 5 || balance > 15) // needs $5 to operate and must be below $15 to operate
-        nextstate = DISPENSE;
-      else
-        nextstate = SELECTION;
+    VERIFY: begin		#!!!What happens when the user inputs more money during the verify state and balance hasnt been updated yet because it hasnt went to CASH state? ex: put $5, how does line 35 trigger again, This should be "if it means the minimum, then selection is available" otherwise  return change and 
+      if(balance < 5 )		#When balance is < 5, Insufficient funds, needs to go back to CASH until minimum is met
+        nextstate = CASH;
+      else if (balance > 5 || )    #When balance is > 5, Balance limit breached, Refund excess change and update balance according to returned change [Keep balance at 5]
+ 	nextstate = REFUND;    
+      else		       #Balance meets minimum and doesnt breach limit, proceed with SELECTION
+	nextstate = SELECTION; 
     end
     SELECTION: begin
       if(selection = 2'b00) // first selection
