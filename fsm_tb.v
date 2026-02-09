@@ -41,6 +41,9 @@ module fsm_tbm;
     #10 cash_inserted = 1;
     #10 cashval = 3;
     #10 cash_inserted = 0;
+    #10 cash_inserted = 1;
+    #10 cashval = 3;
+    #10 cash_inserted = 0;
     #20;
     $finish;
   end
