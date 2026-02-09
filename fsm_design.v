@@ -11,7 +11,6 @@ input  reset;
 input  cash_inserted;
 input  [1:0] selection;
 input  [3:0] cashval;
-output refundval;
 output dispense;
 parameter [3:0]
   IDLE      = 4'b0000,
@@ -25,9 +24,9 @@ parameter [3:0]
   DISPENSE  = 4'b1000;
   REFUND    = 4'b1001;
 
-reg [3:0] state, nextstate;
+	reg [3:0] state, nextstate, refundval, balance;
 //state register: basically remembers what state we're in
-  reg [3:0] balance; // most the user can insert is $15
+   // most the user can insert is $15
 always @(posedge clk) begin
   if (reset)
     state <= IDLE;
@@ -38,6 +37,10 @@ always @(posedge clk) begin
   else
     state <= nextstate;
 end
+
+	always(@posedge clk) begin
+		balance = cashval + balance;
+	end
 	  
 //next state logic. this is what needs to be worked on the most
 always @(*) begin
