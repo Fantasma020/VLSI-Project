@@ -98,7 +98,7 @@ always @(*) begin
 end
 
 always @(*) begin
-           dispense = (state == DISPENSE)
+           dispense = (state == DISPENSE);
 end
 
 endmodule
