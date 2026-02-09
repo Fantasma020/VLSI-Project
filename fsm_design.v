@@ -37,7 +37,7 @@ always @(posedge clk)begin
 	else if (state ==IDLE)
 	balance <=4'd0;
 	else if (state ==CASH && cash_inserted)begin
-	if (balance+cashval >=4d5) balance <= 4'd5;
+	if (balance+cashval >=4'd5) balance <= 4'd5;
 	else 
 	balance <= balance + cashval;
 	end
@@ -48,8 +48,9 @@ always @(*) begin
   nextstate = state;
   case (state)
     IDLE: begin
-	if (cash_inserted ) //once cash is inserted then we go into the next state
-    end
+	if (cash_inserted )//once cash is inserted then we go into the next state
+    nextstate = CASH;
+	end
     CASH: begin
 		if(!cash_inserted) //we stopped putting in money //How do we make sure this doesnt eat any input, is cash_inserted boolean? cash_inserted is boolean 
         nextstate = VERIFY;
