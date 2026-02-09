@@ -1,16 +1,11 @@
-module fsm(clk,
-		   reset, 
-		   cash_inserted, 
-		   selection, 
-		   cashval, 
-		   dispense
-		  );
+module fsm(clk,reset,cash_inserted,selection,cashval,dispense);
 	//port declaration
 input  clk;
 input  reset;
 input  cash_inserted;
 input  [1:0] selection;
 input  [3:0] cashval;
+
 output dispense;
 parameter [3:0]
   IDLE      = 4'b0000,
@@ -22,25 +17,18 @@ parameter [3:0]
   SEL2      = 4'b0110,
   SEL3      = 4'b0111,
   DISPENSE  = 4'b1000;
-  REFUND    = 4'b1001;
 
-	reg [3:0] state, nextstate, refundval, balance;
+reg [3:0] state, nextstate;
 //state register: basically remembers what state we're in
-   // most the user can insert is $15
+  reg [3:0] balance; // most the user can insert is $15
 always @(posedge clk) begin
-  if (reset)
+  if (reset)begin
     state <= IDLE;
-	balance <= 4'b0000;
-	cash_inserted = 0;
-    selection = 2'b00;
-    cashval = 4'b0000;
+	balance = 4'b0000;
+end
   else
     state <= nextstate;
 end
-
-	always(@posedge clk) begin
-		balance = cashval + balance;
-	end
 	  
 //next state logic. this is what needs to be worked on the most
 always @(*) begin
@@ -59,21 +47,13 @@ always @(*) begin
       else // if user is still inserting cash then stay in CASH state
         nextstate <= CASH;
     end
-    VERIFY: begin		//!!!What happens when the user inputs more money during the verify state and balance hasnt been updated yet because it hasnt went to CASH state? ex: put $5, how does line 35 trigger again, This should be "if it means the minimum, then selection is available" otherwise  return change and 
+    VERIFY: begin		//What happens when the user inputs more money during the verify state and balance hasnt been updated yet because it hasnt went to CASH state? ex: put $5, how does line 35 trigger again, This should be "if it means the minimum, then selection is available" otherwise  return change and 
 		if(balance < 5 )		//When balance is < 5, Insufficient funds, needs to go back to CASH until minimum is met
-        nextstate <= CASH;
-		else if (balance > 5 )    //When balance is > 5, Balance limit breached, Refund excess change and update balance according to returned change [Keep balance at 5]
- 	nextstate <= REFUND;    
+        nextstate <= CASH;  
 		else if (!cash_inserted)	       //Balance meets minimum and doesnt breach limit, proceed with SELECTION
 	nextstate <= SELECTION; 
     end
-	REFUND : begin
-		//return money
-		refundval = balance - 5;
-		balance = 5;
-		nextstate <= VERIFY;
-	end
-    SELECTION: begin
+	SELECTION: begin
 		if(selection == 2'b01) // first selection
         nextstate <= SEL1;
 		else if(selection == 2'b10) // user chose second selection
@@ -103,5 +83,7 @@ always @(*) begin
     end
   endcase
 end
+
+assign dispense = (state ==DISPENSE);
 
 endmodule
