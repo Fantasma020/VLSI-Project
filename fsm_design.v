@@ -56,14 +56,18 @@ always @(*) begin
       else
         nextstate = CASH;
     end
-    VERIFY: begin		#!!!What happens when the user inputs more money during the verify state and balance hasnt been updated yet because it hasnt went to CASH state? ex: put $5, how does line 35 trigger again, This should be "if it means the minimum, then selection is available" otherwise  return change and 
-      if(balance < 5 )		#When balance is < 5, Insufficient funds, needs to go back to CASH until minimum is met
+    VERIFY: begin		//!!!What happens when the user inputs more money during the verify state and balance hasnt been updated yet because it hasnt went to CASH state? ex: put $5, how does line 35 trigger again, This should be "if it means the minimum, then selection is available" otherwise  return change and 
+		if(balance < 5 )		//When balance is < 5, Insufficient funds, needs to go back to CASH until minimum is met
         nextstate = CASH;
-      else if (balance > 5 || )    #When balance is > 5, Balance limit breached, Refund excess change and update balance according to returned change [Keep balance at 5]
+		else if (balance > 5 )    //When balance is > 5, Balance limit breached, Refund excess change and update balance according to returned change [Keep balance at 5]
  	nextstate = REFUND;    
-      else		       #Balance meets minimum and doesnt breach limit, proceed with SELECTION
+		else if (!cash_inserted)	       //Balance meets minimum and doesnt breach limit, proceed with SELECTION
 	nextstate = SELECTION; 
     end
+	REFUND : begin
+		//return money
+		nextstate= VERIFY;
+	end
     SELECTION: begin
       if(selection = 2'b00) // first selection
         nextstate = SEL1;
