@@ -104,5 +104,5 @@ always @(*) begin
   endcase
 end
 
-Endmodule
+endmodule
 
