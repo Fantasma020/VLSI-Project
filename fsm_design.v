@@ -21,8 +21,7 @@ parameter [3:0]
   SEL1      = 4'b0101,
   SEL2      = 4'b0110,
   SEL3      = 4'b0111,
-  DISPENSE  = 4'b1000,
-  REFUND    = 4'b1001;
+  DISPENSE  = 4'b1000;
 
 reg [3:0] state, nextstate;
 //state register: basically remembers what state we're in
@@ -64,14 +63,10 @@ always @(*) begin
     VERIFY: begin        //!!!What happens when the user inputs more money during the verify state and balance hasn't been updated yet because it hasnt went to CASH state? ex: put $5, how does line 35 trigger again, This should be "if it means the minimum, then selection is available" otherwise  return change and 
         if(balance < 5 )        //When balance is < 5, Insufficient funds, needs to go back to CASH until minimum is met
         nextstate = CASH;
-        else if (balance > 5 )    //When balance is > 5, Balance limit breached, Refund excess change and update balance according to returned change [Keep balance at 5]
-     nextstate = REFUND;    
-        else          //Balance meets minimum and doesnt breach limit, proceed with SELECTION
-    nextstate = SELECTION; 
+1       else if (balance >= 5)    //When balance is > 5, Balance limit breached, Refund excess change and update balance according to returned change [Keep balance at 5]
+     nextstate = SELECTION; 
     end
-    REFUND : begin
-        //return money
-        nextstate= VERIFY;
+    
     end
     SELECTION: begin
         if(selection == 2'b00) // first selection
