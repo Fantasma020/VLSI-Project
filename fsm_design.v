@@ -27,7 +27,7 @@ parameter [3:0]
 reg [3:0] state, nextstate;
 //state register: basically remembers what state we're in
   reg [3:0] balance; // most the user can insert is $15
-always @(posedge clk or posedge reset) begin
+always @(posedge clk) begin
   if (reset)
     state <= IDLE;
   else
@@ -36,7 +36,7 @@ end
 	
 
 //cash insertion counting
-  always @(posedge clk or posedge reset) begin
+	always @(posedge clk) begin
     if(reset)
       balance <= 4'b0000;
     else if(state == CASH && cash_inserted)	//This is what was not triggering before sequentially
