@@ -67,11 +67,11 @@ always @(*) begin
      nextstate = SELECTION; 
     end
     SELECTION: begin
-        if(selection == 2'b00) // first selection
+               if(selection == 2'b01) // first selection
         nextstate = SEL1;
-        else if(selection == 2'b01) // user chose second selection
+               else if(selection == 2'b10) // user chose second selection
         nextstate = SEL2;
-        else if (selection == 2'b10) // user chooses third selection
+               else if (selection == 2'b11) // user chooses third selection
         nextstate = SEL3;
       else                // otherwise the user must choose a proper selection
         nextstate = SELECTION;
