@@ -1,3 +1,4 @@
+`include "fsm_design.v"
 module fsm_tbm;
   reg clk;
   reg reset;
