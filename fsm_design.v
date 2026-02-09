@@ -6,6 +6,7 @@ module fsm(clk,
 		   cashval, 
 		   dispense
 		  );
+	//port declaration
 input  logic       clk;
 input  logic       reset;
 input  logic       cash_inserted;
