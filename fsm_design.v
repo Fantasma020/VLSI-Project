@@ -21,7 +21,7 @@ parameter [3:0]
   SEL1      = 4'b0101,
   SEL2      = 4'b0110,
   SEL3      = 4'b0111,
-  DISPENSE  = 4'b1000;
+  DISPENSE  = 4'b1000,
   REFUND    = 4'b1001;
 
 reg [3:0] state, nextstate;
@@ -66,7 +66,7 @@ always @(*) begin
         nextstate = CASH;
         else if (balance > 5 )    //When balance is > 5, Balance limit breached, Refund excess change and update balance according to returned change [Keep balance at 5]
      nextstate = REFUND;    
-        else if (!cash_inserted)           //Balance meets minimum and doesnt breach limit, proceed with SELECTION
+        else          //Balance meets minimum and doesnt breach limit, proceed with SELECTION
     nextstate = SELECTION; 
     end
     REFUND : begin
