@@ -41,9 +41,7 @@ localparam [11:0] MIN_PRICE = 12'd199;
 localparam [15:0] TIMEOUT_MAX = 16'd200;
 wire timeout_hit = (timeout_cnt >= TIMEOUT_MAX);
 
-// ----------------------
-// State register
-// ----------------------
+
 always @(posedge clk) begin
   if (reset)
     state <= IDLE;
@@ -51,9 +49,7 @@ always @(posedge clk) begin
     state <= nextstate;
 end
 
-// ----------------------
-// Balance register (CHANGED: uses balance_n)
-// ----------------------
+
 always @(posedge clk) begin
   if (reset)
     balance <= 12'd0;
@@ -61,23 +57,19 @@ always @(posedge clk) begin
     balance <= balance_n;
 end
 
-// ----------------------
-// Timeout counter (ADDED)
-// ----------------------
+
 always @(posedge clk) begin
   if (reset)
     timeout_cnt <= 16'd0;
   else if (state == IDLE)
     timeout_cnt <= 16'd0;
   else if (cash_inserted || cancel)
-    timeout_cnt <= 16'd0;               // ADDED: reset on activity
+    timeout_cnt <= 16'd0;              
   else
-    timeout_cnt <= timeout_cnt + 16'd1; // ADDED: increments while active
+    timeout_cnt <= timeout_cnt + 16'd1; 
 end
 
-// ----------------------
-// Next-state + next-balance logic
-// ----------------------
+
 always @(*) begin
   // defaults (prevents latches)
   nextstate     = state;
@@ -86,34 +78,41 @@ always @(*) begin
   change_amount = 12'd0;
 
   case (state)
-
+      // start at Idle where balance = 0 and we wait for cash to be inserted
     IDLE: begin
-      balance_n = 12'd0; // keep original behavior: clear in IDLE
+      balance_n = 12'd0;
+        // if cash is inserted then we go to the next state
       if (cash_inserted)
         nextstate = CASH;
+        //otherwise we stay in idle
       else
         nextstate = IDLE;
     end
 
     CASH: begin
-      // CHANGED: add literal cents while cash_inserted is high
+      // user adds literal cents while cash_inserted is high
       if (cash_inserted) begin
         balance_n = balance + cashval;
         nextstate = CASH;
-      end else begin
+      end 
+        // once user is done inserting money then we go to Verify
+        else begin
         nextstate = VERIFY;
       end
     end
 
+      // We check if they have inserted the minimum cash needed to vend an item,
     VERIFY: begin
+        // if not enough then we go back to idle
       if (balance < MIN_PRICE)
         nextstate = IDLE;
+        // otherwise we go to the next state
       else
         nextstate = SELECTION;
     end
 
     SELECTION: begin
-      // Keep your original SEL1–SEL3 names, and use BALANCE as the 4th item state
+        //User must select a chouce from 1 to 3. If no selection is made then we stay here or they can cancel by slelecting 0
       if (selection == 2'b00)
         nextstate = BALANCE;
       else if (selection == 2'b01)
@@ -126,7 +125,7 @@ always @(*) begin
         nextstate = SELECTION;
     end
 
-    // COMPROMISE: these states now do price check + balance update (not pass-through)
+    // these states now do price check + balance update (not pass-through)
     BALANCE: begin // item0
       if (balance >= PRICE0) begin
         balance_n = balance - PRICE0;
@@ -136,7 +135,7 @@ always @(*) begin
       end
     end
 
-    SEL1: begin // item1
+    SEL1: begin // item1 update teh balance after choosing item 1 only if they have enough
       if (balance >= PRICE1) begin
         balance_n = balance - PRICE1;
         nextstate = DISPENSE;
@@ -145,7 +144,7 @@ always @(*) begin
       end
     end
 
-    SEL2: begin // item2
+    SEL2: begin // item2 update the balance after choosing item 2 only if they have enough
       if (balance >= PRICE2) begin
         balance_n = balance - PRICE2;
         nextstate = DISPENSE;
@@ -154,7 +153,7 @@ always @(*) begin
       end
     end
 
-    SEL3: begin // item3
+    SEL3: begin // item3 update teh balance after choosing item 3 only if thye have enough
       if (balance >= PRICE3) begin
         balance_n = balance - PRICE3;
         nextstate = DISPENSE;
@@ -187,8 +186,6 @@ always @(*) begin
     end
   endcase
 
-  // ADDED/CHANGED: TRUE PRIORITY override so cancel/timeout always wins
-  // (Prevents the earlier issue where case-assignments could overwrite it.)
   if ((cancel || timeout_hit) && (state != IDLE) && (balance != 12'd0)) begin
     nextstate = CHANGE;
   end
