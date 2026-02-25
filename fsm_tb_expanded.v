@@ -38,18 +38,14 @@ module fsm_tbm;
 
     #10 reset = 0;
 
-    // -------------------------
     // TEST 1: Insert 600 cents, buy $5.99 (sel=01) -> leftover 1 cent -> CHANGE
-    // -------------------------
     #10 cash_inserted = 1; cashval = 12'd600;
     #20 cash_inserted = 0; cashval = 12'd0;   // hold long enough to cross a posedge
 
     #10 selection = 2'b01; // $5.99
     #80;
 
-    // -------------------------
     // TEST 2: Insert 1000 cents, buy $3.99 (sel=10) -> leftover can still buy -> multi-purchase path
-    // -------------------------
     #10 reset = 1;
     #10 reset = 0;
 
