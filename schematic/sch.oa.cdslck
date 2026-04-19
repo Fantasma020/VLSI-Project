@@ -1,0 +1,16 @@
+#
+# Edit Lock-Stake file. CAUTION: Please do not change.
+#
+# Information about current Edit Lock Owner.
+#
+LockStakeVersion               1.1
+LoginName                      fxh220001
+HostName                       engnx04a.utdallas.edu
+ProcessIdentifier              509497
+ProcessCreationTime_UTC        1776630578
+ProcessCreationTime_Readable   Sun Apr 19 15:29:38 2026 CDT
+AppIdentifier                  OA File System Design Manager
+OSType                         unix
+ReasonForPlacingEditLock       OpenAccess edit lock
+FilePathUsedToEditLock         /home/013/f/fx/fxh220001/cad/gf65/Proj4/dff/schematic/sch.oa.cdslck
+TimeEditLocked                 Sun Apr 19 15:33:26 2026 CDT
